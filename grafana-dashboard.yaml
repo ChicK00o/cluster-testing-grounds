@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-grafana
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`grafana.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: grafana
+          port: 3000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-grafana-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`grafana.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: grafana
+          port: 3000
+  tls:
+    domains:
+      - main: grafana.localhost

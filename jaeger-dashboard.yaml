@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-jaeger
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`jaeger.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: jaeger-query
+          port: 16686
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-jaeger-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`jaeger.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: jaeger-query
+          port: 16686
+  tls:
+    domains:
+      - main: jaeger.localhost

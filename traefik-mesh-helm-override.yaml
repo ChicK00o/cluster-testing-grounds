@@ -1,0 +1,4 @@
+logLevel: debug
+
+proxy:
+  logLevel: debug

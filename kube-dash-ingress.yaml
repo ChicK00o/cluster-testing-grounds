@@ -1,0 +1,60 @@
+# # Strip prefix /foobar and /fiibar
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: strip-custom
+# spec:
+#   stripPrefix:
+#     prefixes:
+#       - /dashboard
+#       - /kube
+# ---
+# Redirect to https
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirectscheme
+spec:
+  redirectScheme:
+    scheme: https
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kube-dashboard-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`kube.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: kubernetes-dashboard
+          port: 443
+          namespace: kubernetes-dashboard
+          passHostHeader: false
+          scheme: https
+  tls:
+    domains:
+      - main: kube.localhost
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kube-dashboard-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`kube.localhost`)
+      kind: Rule
+      middlewares:
+        - name: redirectscheme
+      services:
+        - kind: Service
+          name: kubernetes-dashboard
+          port: 443
+          namespace: kubernetes-dashboard
+          passHostHeader: false
+          scheme: https

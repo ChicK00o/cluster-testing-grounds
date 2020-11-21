@@ -1,0 +1,14 @@
+k3d cluster create devcluster \
+--api-port 0.0.0.0:6443 \
+--k3s-server-arg --disable=traefik \
+--k3s-server-arg --disable=servicelb
+
+k3d kubeconfig get devcluster > $HOME/.kube/config
+
+export POD_NAME=$(kubectl get pods -n kubernetes-dashboard -l "k8s-app=kubernetes-dashboard" -o jsonpath="{.items[0].metadata.name}")
+
+echo https://127.0.0.1:8443/
+  
+kubectl -n kubernetes-dashboard port-forward $POD_NAME 8443:8443
+
+kubectl -n kubernetes-dashboard describe secret admin-user-token | grep ^token
