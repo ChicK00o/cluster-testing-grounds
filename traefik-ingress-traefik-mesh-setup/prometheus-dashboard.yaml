@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-prometheus
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`prometheus.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: prometheus
+          port: 9090
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-prometheus-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`prometheus.localhost`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: prometheus
+          port: 9090
+  tls:
+    domains:
+      - main: prometheus.localhost

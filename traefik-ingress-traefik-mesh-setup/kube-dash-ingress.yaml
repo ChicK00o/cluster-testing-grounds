@@ -32,7 +32,7 @@ spec:
         - kind: Service
           name: kubernetes-dashboard
           port: 443
-          namespace: kubernetes-dashboard
+          namespace: default
           passHostHeader: false
           scheme: https
   tls:
@@ -55,6 +55,6 @@ spec:
         - kind: Service
           name: kubernetes-dashboard
           port: 443
-          namespace: kubernetes-dashboard
+          namespace: default
           passHostHeader: false
           scheme: https
