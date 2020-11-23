@@ -20,7 +20,53 @@ kubectl apply -f kube-dashboard.yaml
 
 sleep 15  # Waits 1 seconds.
 
-kubectl describe secret admin-user-token | grep ^token
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.8/samples/addons/grafana.yaml
+
+sleep 1
+
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.8/samples/addons/jaeger.yaml
+
+sleep 1
+
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.8/samples/addons/kiali.yaml
+
+sleep 5
+
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.8/samples/addons/kiali.yaml
+
+sleep 1
+
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.8/samples/addons/prometheus.yaml
+
+sleep 15
+
+kubectl create -n istio-system secret tls all-localhost-credential --key=all.localhost.key --cert=all.localhost.crt
+
+sleep 5
+
+kubectl apply -f prometheus-dashboard.yaml
+
+sleep 1  # Waits 1 seconds.
+
+kubectl apply -f jaeger-dashboard.yaml
+
+sleep 1  # Waits 1 seconds.
+
+kubectl apply -f grafana-dashboard.yaml
+
+sleep 1 # Waits 1 seconds.
+
+kubectl apply -f kiali-dashboard.yaml
+
+sleep 1 # Waits 1 seconds.
 
 echo "---"
+echo "token for kube dashboard login :"
+echo ""
+kubectl describe secret admin-user-token | grep ^token
+echo "---"
+echo "kiali.localhost/"
 echo "kube.localhost/"
+echo "jaeger.localhost/"
+echo "grafana.localhost/"
+echo "prometheus.localhost/"

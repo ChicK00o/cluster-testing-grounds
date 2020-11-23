@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: dashboard-gateway-jaeger
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http-jaeger
+      protocol: HTTP
+    hosts:
+    - jaeger.localhost
+  - port:
+      number: 443
+      name: https-jaeger
+      protocol: HTTPS
+    hosts:
+    - jaeger.localhost
+    tls:
+      mode: SIMPLE
+      credentialName: all-localhost-credential # must be the same as secret
+      # mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dashboard-vs-jaeger
+  namespace: istio-system 
+spec:
+  hosts:
+  - jaeger.localhost
+  gateways:
+  - dashboard-gateway-jaeger
+  http:
+  - route:
+    - destination:
+        host: tracing.istio-system.svc.cluster.local
+        port:
+          number: 80

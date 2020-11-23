@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: dashboard-gateway-grafana
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http-grafana
+      protocol: HTTP
+    hosts:
+    - grafana.localhost
+  - port:
+      number: 443
+      name: https-grafana
+      protocol: HTTPS
+    hosts:
+    - grafana.localhost
+    tls:
+      mode: SIMPLE
+      credentialName: all-localhost-credential # must be the same as secret
+      # mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dashboard-vs-grafana
+  namespace: istio-system 
+spec:
+  hosts:
+  - grafana.localhost
+  gateways:
+  - dashboard-gateway-grafana
+  http:
+  - route:
+    - destination:
+        host: grafana.istio-system.svc.cluster.local
+        port:
+          number: 3000

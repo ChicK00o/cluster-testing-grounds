@@ -8,7 +8,7 @@ echo "token for kube dashboard login :"
 echo ""
 kubectl describe secret admin-user-token | grep ^token
 echo "---"
-echo "traefik.localhost/dashboard/"
+echo "kiali.localhost/"
 echo "kube.localhost/"
 echo "jaeger.localhost/"
 echo "grafana.localhost/"

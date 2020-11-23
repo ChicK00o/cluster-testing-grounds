@@ -6,8 +6,10 @@ kubectl create secret generic cacerts -n istio-system \
 
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=localhost Inc./CN=localhost' -keyout localhost.key -out localhost.crt
 
-openssl req -out kube.localhost.csr -newkey rsa:2048 -nodes -keyout kube.localhost.key -subj "/CN=kube.localhost/O=kube organization"
+openssl req -out all.localhost.csr -newkey rsa:2048 -nodes -keyout all.localhost.key -subj "/CN=all.localhost/O=all organization"
 
-kubectl create -n istio-system secret tls kube-localhost-credential --key=kube.localhost.key --cert=kube.localhost.crt
+openssl x509 -req -days 365 -CA localhost.crt -CAkey localhost.key -set_serial 0 -in all.localhost.csr -out all.localhost.crt
+
+kubectl create -n istio-system secret tls all-localhost-credential --key=all.localhost.key --cert=all.localhost.crt
 
 kubectl describe secret admin-user-token -n kubernetes-dashboard | grep ^token
